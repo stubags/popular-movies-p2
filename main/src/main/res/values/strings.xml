@@ -31,6 +31,10 @@
     <string name="pref_country_default">US</string>
     <string name="unknown_date">Unknown</string>
 
+    <string name="favourite_button_description">Set as favourite</string>
+    <string name="wantit_button_description">Want it in my collection</string>
+    <string name="ownit_button_description">It\'s in my collection</string>
+
     <string name="labelAR">AR</string>
     <string name="labelAU">AU</string>
     <string name="labelAZ">AZ</string>
