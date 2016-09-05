@@ -1,10 +1,10 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          android:id="@+id/movie_detail_fragment"
-          android:name="com.example.android.popularmovies.main.MovieDetailActivityFragment"
-          tools:layout="@layout/fragment_movie_detail"
-          tools:context="com.example.android.popularmovies.app.MovieDetailActivity" tools:ignore="MergeRootFrame"
+          android:id="@+id/movie_detail_container"
           android:layout_width="match_parent"
-          android:layout_height="match_parent" >
-</fragment>
+          android:layout_height="match_parent"
+          tools:context="com.example.android.popularmovies.app.MovieDetailActivity"
+          tools:ignore="MergeRootFrame"
+>
+</FrameLayout>
 

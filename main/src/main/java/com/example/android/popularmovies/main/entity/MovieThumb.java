@@ -1,6 +1,9 @@
-package com.example.android.popularmovies.main;
+package com.example.android.popularmovies.main.entity;
 
+import android.content.Context;
 import android.net.Uri;
+import com.example.android.popularmovies.main.MovieImageView;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by stuartwhitcombe on 22/06/16.
@@ -30,6 +33,7 @@ public class MovieThumb {
         this.geller = image;
     }
 
+
     @Override
     public String toString() {
         return "MovieThumb{" +
@@ -37,5 +41,9 @@ public class MovieThumb {
                 ", title='" + title + '\'' +
                 ", geller=" + geller +
                 '}';
+    }
+
+    public void loadImageInto(MovieImageView imageView, Context context) {
+        Picasso.with(context).load(getUri()).into(imageView);
     }
 }

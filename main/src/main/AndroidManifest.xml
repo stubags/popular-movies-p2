@@ -20,6 +20,15 @@
             </intent-filter>
         </activity>
         <activity
+                android:name=".SettingsActivity"
+                android:label="@string/title_activity_settings"
+                android:theme="@style/SettingsTheme"
+                android:parentActivityName=".MainActivity" >
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.example.android.popularmovies.main.MainActivity" />
+        </activity>
+        <activity
             android:name=".MovieDetailActivity"
             android:label="@string/title_activity_movie_detail"
             android:parentActivityName="com.example.android.popularmovies.main.MainActivity" >
@@ -27,6 +36,11 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="com.example.android.popularmovies.main.MainActivity" />
         </activity>
+        <provider
+                android:authorities="@string/content_authority"
+                android:name=".data.MovieProvider"
+                android:exported="false"
+                android:syncable="true" />
     </application>
 
 </manifest>

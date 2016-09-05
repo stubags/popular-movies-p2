@@ -1,4 +1,4 @@
-package com.example.android.popularmovies.main;
+package com.example.android.popularmovies.main.entity;
 
 import android.net.Uri;
 
