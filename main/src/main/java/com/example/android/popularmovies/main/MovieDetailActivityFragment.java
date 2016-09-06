@@ -210,13 +210,16 @@ public class MovieDetailActivityFragment extends Fragment {
     }
 
     private void getMovie() {
-        new FetchMoviesTask().execute(movieId);
+        if(movieId != -1)
+            new FetchMoviesTask().execute(movieId);
     }
 
     private void getExtraInfo() {
-        new FetchTrailersTask().execute(movieId);
-        new FetchReviewsTask().execute(movieId);
-        new FetchReleaseDatesTask().execute(movieId);
+        if(movieId != -1) {
+            new FetchTrailersTask().execute(movieId);
+            new FetchReviewsTask().execute(movieId);
+            new FetchReleaseDatesTask().execute(movieId);
+        }
     }
 
     private class BitmapAndImageTarget implements Target {
