@@ -26,8 +26,10 @@ import java.util.List;
  */
 public class MovieAPIUtil {
     private static final String LOG_TAG = "MovieAPIUtil";
-    private static final String popularityRoot = "https://api.themoviedb.org/3/discover/movie?certification_country=US&certification.ltR&sort_by=popularity.desc";
-    private static final String topRatedRoot = "https://api.themoviedb.org/3/discover/movie?certification_country=US&certification.ltR&sort_by=vote_average.desc";
+    //private static final String popularityRoot = "https://api.themoviedb.org/3/discover/movie?certification_country=US&certification.ltR&sort_by=popularity.desc";
+    //private static final String topRatedRoot = "https://api.themoviedb.org/3/discover/movie?certification_country=US&certification.ltR&sort_by=vote_average.desc";
+    private static final String popularityRoot = "https://api.themoviedb.org/3/movie/popular";
+    private static final String topRatedRoot = "https://api.themoviedb.org/3/movie/top_rated";
     private static final String getMovie = "https://api.themoviedb.org/3/movie/";
     private static final String publicGetMovie = "https://www.themoviedb.org/movie/";
     private static final String trailerPath = "videos";

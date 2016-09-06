@@ -237,26 +237,36 @@ public class MovieDetailActivityFragment extends Fragment {
 
         @Override
         protected void onPostExecute(MovieDetail md) {
-            if(md != null) {
-                mMovie = md;
-                title.setText(md.getTitle());
-                BitmapAndImageTarget target = new BitmapAndImageTarget();
-                Picasso.with(getContext()).load(md.getUri()).into(target);
-                synopsis.setText(md.getSynopsis());
-                releaseDate.setText(md.getReleaseDate());
-                averageVote.setText(String.valueOf(md.getVoteAverage()));
-                ((Callback)getActivity()).onMovieSelected(md.getTitle() + ", " + MovieAPIUtil.buildMovieUri(md.getId()));
+            try {
+                if (md != null) {
+                    mMovie = md;
+                    title.setText(md.getTitle());
+                    BitmapAndImageTarget target = new BitmapAndImageTarget();
+                    Picasso.with(getContext()).load(md.getUri()).into(target);
+                    synopsis.setText(md.getSynopsis());
+                    releaseDate.setText(md.getReleaseDate());
+                    averageVote.setText(String.valueOf(md.getVoteAverage()));
+                    ((Callback) getActivity()).onMovieSelected(md.getTitle() + ", " + MovieAPIUtil.buildMovieUri(md.getId()));
+                }
+            }
+            catch(Exception e) {
+                Log.e(LOG_TAG, "Something went wrong when I tried to post execute the Fetch Movies task!  Maybe I'm too late...");
             }
         }
 
         @Override
         protected MovieDetail doInBackground(Long... params) {
-
-            if(params.length != 1) {
+            try {
+                if (params.length != 1) {
+                    return null;
+                }
+                long movieId = params[0];
+                return MovieAPIUtil.getMovie(getContext(), movieId, getString(R.string.themoviedb_apikey));
+            }
+            catch(Exception e) {
+                Log.e(LOG_TAG, "Something went wrong when I tried to doInBackground the Fetch Movies task!  Maybe I'm too late...");
                 return null;
             }
-            long movieId = params[0];
-            return MovieAPIUtil.getMovie(getContext(), movieId, getString(R.string.themoviedb_apikey));
         }
     }
 
@@ -264,47 +274,58 @@ public class MovieDetailActivityFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<MovieTrailer> trailers) {
-            if(trailers != null) {
-                int nextId = TRAILER_BASE_VIEW_ID;
+            try {
+                if (trailers != null) {
+                    int nextId = TRAILER_BASE_VIEW_ID;
 
-                for(final MovieTrailer trailer : trailers) {
-                    Button trailerButton = new Button(getContext());
-                    trailerButton.setText(trailer.getName());
-                    trailerButton.setId(nextId++);
-                    if (Build.VERSION.SDK_INT < 23) {
-                        trailerButton.setTextAppearance(getContext(), android.R.style.TextAppearance_Medium);
-                    } else {
-                        trailerButton.setTextAppearance(android.R.style.TextAppearance_Medium);
-                    }
-                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
-                    layoutParams.addRule(RelativeLayout.BELOW, nextId == 251 ? R.id.textView5 : nextId - 2);
-                    detailLayout.addView(trailerButton, layoutParams);
-
-                    trailerButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            startActivity(new Intent(Intent.ACTION_VIEW,
-                                Uri.parse(getString(R.string.youTube_video_root)).
-                                buildUpon().appendQueryParameter(getString(R.string.youTube_video_key),
-                                trailer.getKey()).build()));
+                    for (final MovieTrailer trailer : trailers) {
+                        Button trailerButton = new Button(getContext());
+                        trailerButton.setText(trailer.getName());
+                        trailerButton.setId(nextId++);
+                        if (Build.VERSION.SDK_INT < 23) {
+                            trailerButton.setTextAppearance(getContext(), android.R.style.TextAppearance_Medium);
+                        } else {
+                            trailerButton.setTextAppearance(android.R.style.TextAppearance_Medium);
                         }
-                    });
+                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
+                        layoutParams.addRule(RelativeLayout.BELOW, nextId == 251 ? R.id.textView5 : nextId - 2);
+                        detailLayout.addView(trailerButton, layoutParams);
+
+                        trailerButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startActivity(new Intent(Intent.ACTION_VIEW,
+                                        Uri.parse(getString(R.string.youTube_video_root)).
+                                                buildUpon().appendQueryParameter(getString(R.string.youTube_video_key),
+                                                trailer.getKey()).build()));
+                            }
+                        });
+                    }
+                    TextView reviewText = (TextView) detailLayout.findViewById(R.id.textView6);
+                    RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) reviewText.getLayoutParams();
+                    layoutParams.addRule(RelativeLayout.BELOW, nextId - 1);
+                    reviewText.setLayoutParams(layoutParams);
+                    //mtAdapter.addAll(thumbs);  API 11 apparently....
                 }
-                TextView reviewText = (TextView)detailLayout.findViewById(R.id.textView6);
-                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)reviewText.getLayoutParams();
-                layoutParams.addRule(RelativeLayout.BELOW, nextId - 1);
-                reviewText.setLayoutParams(layoutParams);
-                //mtAdapter.addAll(thumbs);  API 11 apparently....
+            }
+            catch(Exception e) {
+                Log.e(LOG_TAG, "Something went wrong when I tried to post execute the Fetch Trailers task!  Maybe I'm too late...");
             }
         }
 
         @Override
         protected List<MovieTrailer> doInBackground(Long... params) {
-            if(params.length != 1) {
+            try {
+                if (params.length != 1) {
+                    return null;
+                }
+                Long movieId = params[0];
+                return MovieAPIUtil.getTrailers(getContext(), getResources(), movieId, getString(R.string.themoviedb_apikey));
+            }
+            catch(Exception e) {
+                Log.e(LOG_TAG, "Something went wrong when I tried to doInBackground the Fetch Trailers task!  Maybe I'm too late...");
                 return null;
             }
-            Long movieId = params[0];
-            return MovieAPIUtil.getTrailers(getContext(), getResources(), movieId, getString(R.string.themoviedb_apikey));
         }
     }
 
@@ -312,42 +333,53 @@ public class MovieDetailActivityFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<MovieReview> reviews) {
-            if(reviews != null) {
-                int nextId = REVIEW_BASE_VIEW_ID;
+            try {
+                if (reviews != null) {
+                    int nextId = REVIEW_BASE_VIEW_ID;
 
-                for(MovieReview review : reviews) {
-                    TextView textViewAuthor = new TextView(getContext());
-                    textViewAuthor.setText(review.getAuthor());
-                    textViewAuthor.setId(nextId++);
-                    if (Build.VERSION.SDK_INT < 23) {
-                        textViewAuthor.setTextAppearance(getContext(), android.R.style.TextAppearance_Medium);
-                    } else {
-                        textViewAuthor.setTextAppearance(android.R.style.TextAppearance_Medium);
+                    for (MovieReview review : reviews) {
+                        TextView textViewAuthor = new TextView(getContext());
+                        textViewAuthor.setText(review.getAuthor());
+                        textViewAuthor.setId(nextId++);
+                        if (Build.VERSION.SDK_INT < 23) {
+                            textViewAuthor.setTextAppearance(getContext(), android.R.style.TextAppearance_Medium);
+                        } else {
+                            textViewAuthor.setTextAppearance(android.R.style.TextAppearance_Medium);
+                        }
+                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
+                        layoutParams.addRule(RelativeLayout.BELOW, nextId == 501 ? R.id.textView6 : nextId - 2);
+
+                        detailLayout.addView(textViewAuthor, layoutParams);
+                        TextView textView = new TextView(getContext());
+                        textView.setText(review.getContent());
+                        textView.setId(nextId++);
+                        layoutParams = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
+                        layoutParams.addRule(RelativeLayout.BELOW, nextId - 2);
+                        detailLayout.addView(textView, layoutParams);
+
+                        //reviewAdapter.add(review);
                     }
-                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
-                    layoutParams.addRule(RelativeLayout.BELOW, nextId == 501 ? R.id.textView6 : nextId - 2);
-
-                    detailLayout.addView(textViewAuthor, layoutParams);
-                    TextView textView = new TextView(getContext());
-                    textView.setText(review.getContent());
-                    textView.setId(nextId++);
-                    layoutParams = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
-                    layoutParams.addRule(RelativeLayout.BELOW, nextId - 2);
-                    detailLayout.addView(textView, layoutParams);
-
-                    //reviewAdapter.add(review);
+                    //mtAdapter.addAll(thumbs);  API 11 apparently....
                 }
-                //mtAdapter.addAll(thumbs);  API 11 apparently....
+            }
+            catch(Exception e) {
+                Log.e(LOG_TAG, "Something went wrong when I tried to post execute the Fetch Reviews task!  Maybe I'm too late...");
             }
         }
 
         @Override
         protected List<MovieReview> doInBackground(Long... params) {
-            if(params.length != 1) {
+            try {
+                if (params.length != 1) {
+                    return null;
+                }
+                Long movieId = params[0];
+                return MovieAPIUtil.getReviews(getContext(), getResources(), movieId, getString(R.string.themoviedb_apikey));
+            }
+            catch(Exception e) {
+                Log.e(LOG_TAG, "Something went wrong when I tried to doInBackground the Fetch Reviews task!  Maybe I'm too late...");
                 return null;
             }
-            Long movieId = params[0];
-            return MovieAPIUtil.getReviews(getContext(), getResources(), movieId, getString(R.string.themoviedb_apikey));
         }
     }
 
@@ -358,28 +390,38 @@ public class MovieDetailActivityFragment extends Fragment {
 
         @Override
         protected void onPostExecute(MovieReleaseDates releaseDates) {
-            if(releaseDates != null) {
-                String country = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.pref_country_key), getString(R.string.pref_country_default));
-                String dvdRelease = releaseDates.getRelDate(country, 5);
-                TextView dvdReleaseDate = (TextView) detailLayout.findViewById(R.id.dvd_release_date);
-                if(dvdRelease != null) {
-                    // set it on the screen
-                    dvdReleaseDate.setText(dvdRelease.substring(0, 10));
+            try {
+                if (releaseDates != null) {
+                    String country = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.pref_country_key), getString(R.string.pref_country_default));
+                    String dvdRelease = releaseDates.getRelDate(country, 5);
+                    TextView dvdReleaseDate = (TextView) detailLayout.findViewById(R.id.dvd_release_date);
+                    if (dvdRelease != null) {
+                        // set it on the screen
+                        dvdReleaseDate.setText(dvdRelease.substring(0, 10));
+                    } else {
+                        // set it to unknown
+                        dvdReleaseDate.setText(getString(R.string.unknown_date));
+                    }
                 }
-                else {
-                    // set it to unknown
-                    dvdReleaseDate.setText(getString(R.string.unknown_date));
-                }
+            }
+            catch(Exception e) {
+                Log.e(LOG_TAG, "Something went wrong when I tried to post execute the Fetch Releases task!  Maybe I'm too late...");
             }
         }
 
         @Override
         protected MovieReleaseDates doInBackground(Long... params) {
-            if(params.length != 1) {
+            try {
+                if (params.length != 1) {
+                    return null;
+                }
+                Long movieId = params[0];
+                return MovieAPIUtil.getReleaseDates(getContext(), getResources(), movieId, getString(R.string.themoviedb_apikey));
+            }
+            catch(Exception e) {
+                Log.e(LOG_TAG, "Something went wrong when I tried to doInBackground the Fetch Releases task!  Maybe I'm too late...");
                 return null;
             }
-            Long movieId = params[0];
-            return MovieAPIUtil.getReleaseDates(getContext(), getResources(), movieId, getString(R.string.themoviedb_apikey));
         }
     }
 
