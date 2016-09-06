@@ -154,6 +154,11 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     }
 
     @Override
+    public boolean isTwoPane() {
+        return mTwoPane;
+    }
+
+    @Override
     public void onMovieSelected(String movieUrl) {
         mMovieStr = movieUrl;
 

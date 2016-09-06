@@ -130,32 +130,6 @@ public class MainActivityFragment extends Fragment {
     }
 
 
-//        MenuItem countryItem = menu.findItem(R.id.country_spinner);
-//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-//        country = prefs.getString(getString(R.string.country_pref), getString(R.string.country_default));
-//        countrySpinner = (Spinner) MenuItemCompat.getActionView(countryItem);
-//
-//        ArrayAdapter<CharSequence> ctry_adapter = ArrayAdapter.createFromResource(getActivity(),
-//                R.array.countries, android.R.layout.simple_spinner_item);
-//        ctry_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        countrySpinner.setAdapter(ctry_adapter);
-//        countrySpinner.setSelection(indexOf(country, R.array.countries));
-//        countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                country = countrySpinner.getItemAtPosition(position).toString();
-//                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-//                prefs.edit().putString(getString(R.string.country_pref), country).apply();
-//
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//                // do nothing
-//            }
-//        });
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -197,6 +171,13 @@ public class MainActivityFragment extends Fragment {
                     return false;
             }
         });
+
+        if(((Callback)getActivity()).isTwoPane()) {
+            MovieThumb theMovie = (MovieThumb) mtAdapter.getItem(mGridView.getSelectedItemPosition());
+            if (theMovie != null) {
+                ((Callback) getActivity()).onItemSelected(theMovie);
+            }
+        }
         return rootView;
     }
 
@@ -222,11 +203,20 @@ public class MainActivityFragment extends Fragment {
             if(thumbs != null) {
                 if(clear) {
                     mtAdapter.clear();
+                    mGridView.setAdapter(null);
+                    mGridView.setAdapter(mtAdapter);
                 }
                 for(MovieThumb thumb : thumbs) {
                     mtAdapter.add(thumb);
                 }
+
                 //mtAdapter.addAll(thumbs);  API 11 apparently....
+                if(clear && ((Callback)getActivity()).isTwoPane()) {
+                    MovieThumb theMovie = (MovieThumb) mtAdapter.getItem(0);
+                    if (theMovie != null) {
+                        ((Callback) getActivity()).onItemSelected(theMovie);
+                    }
+                }
             }
         }
 
@@ -253,6 +243,7 @@ public class MainActivityFragment extends Fragment {
          */
         public void onItemSelected(MovieThumb movieThumb);
         public void setProvider(ShareActionProvider sharedProvider);
+        public boolean isTwoPane();
     }
 
 
